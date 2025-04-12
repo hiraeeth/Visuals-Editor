@@ -8,24 +8,24 @@ A powerful ESP configuration management system for gamesense that enables seamle
 
 **Key Capabilities:**
 
-- Local configuration management
-- Clipboard-based configuration sharing
+- Local configs
+- Clipboard-based config sharing
 - Multi-category visual settings control
-- Real-time configuration switching
+- Real-time config switching
 
 ## Features
 
-### Configuration Management
+### Configuration
 
 - Save/Load ESP presets locally
-- Delete existing configurations
+- Delete existing configs
 - Searchable configuration list
 - Double-click config import
 
 ### Clipboard Operations
 
 - Export selected settings as base64-encoded string
-- Import configurations from clipboard
+- Import configs from clipboard
 - Version compatibility checks
 
 ### Supported Categories
