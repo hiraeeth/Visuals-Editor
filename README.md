@@ -1,28 +1,29 @@
 # Visuals Editor
 
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
+![Preview](https://raw.githubusercontent.com/hiraeeth/Visuals-Editor/main/preview.gif)
 
 ## Overview
 
-A powerful ESP configuration management system for gamesense that enables seamless import/export of visual settings via clipboard and local storage. Developed by dragos112 & mirai.
+Esp config management system for gamesense that enables seamless import/export of visual settings via clipboard and local storage. Developed by dragos112 & mirai.
 
 **Key Capabilities:**
 
-- Local configs
-- Clipboard-based config sharing
-- Multi-category visual settings control
-- Real-time config switching
+- 🗂️ Local config management
+- 📋 Clipboard-based config sharing
+- 🎨 Multi-category visual settings control
+- ⚡ Real-time config switching
 
 ## Features
 
-### Configuration
+### Configs
 
 - Save/Load ESP presets locally
 - Delete existing configs
-- Searchable configuration list
+- Searchable config list
 - Double-click config import
 
-### Clipboard Operations
+### Clipboard
 
 - Export selected settings as base64-encoded string
 - Import configs from clipboard
@@ -30,14 +31,13 @@ A powerful ESP configuration management system for gamesense that enables seamle
 
 ### Supported Categories
 
-- Player ESP
+- Player ESP Settings
 - Colored Models
-- Other ESP
+- Other ESP Elements
 - Visual Effects
-- Menu
+- Menu Customization
 
-## Installation
+### Dependencies
 
-1. **Dependencies:**
-   - [gamesense/clipboard](https://gamesense.pub/forums/viewtopic.php?id=28678)
-   - [gamesense/base64](https://gamesense.pub/forums/viewtopic.php?id=21619)
+- [gamesense/clipboard](https://gamesense.pub/forums/viewtopic.php?id=28678)
+- [gamesense/base64](https://gamesense.pub/forums/viewtopic.php?id=21619)
