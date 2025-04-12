@@ -7,10 +7,10 @@ A visuals manager for gamesense that provides seamless management of visual sett
 
 **Key Capabilities:**
 
-- 🗂️ Local config management
-- 📋 Clipboard-based config sharing
-- 🎨 Multi-category visual settings control
-- ⚡ Real-time config switching
+- Local config management
+- Clipboard-based config sharing
+- Multi-category visual settings control
+- Real-time config switching
 
 ## Features
 
