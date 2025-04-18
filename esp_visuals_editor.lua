@@ -444,7 +444,7 @@ ui.set_callback(menu.elements.download_module, function()
     end)
 
     if not _success then
-        return error("To download modules you need to have 'gamesense/http' library. Subscribe to it: ...")
+        return error("To download modules you need to have 'gamesense/http' library. Subscribe to it: https://gamesense.pub/forums/viewtopic.php?id=19253")
     end
 
     local module = available_modules[ui.get(menu.elements.modules) + 1]
