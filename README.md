@@ -13,6 +13,14 @@ A visuals manager for gamesense that provides seamless management of visual sett
 - Multi-category visual settings control
 - Real-time config switching
 
+## Presets
+![Community_Presets](https://raw.githubusercontent.com/hiraeeth/Visuals-Editor/main/community_presets.png)
+
+Access our collection of community-created visual presets at no cost.
+Join our Discord community: https://discord.gg/HMdVm5nfyB
+Navigate to the visuals channel to browse available presets.
+Note: Make sure to enable channel visibility in your Discord settings if the visuals channel is not visible.
+
 ## Features
 
 ### Configs
