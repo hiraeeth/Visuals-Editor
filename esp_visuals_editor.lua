@@ -1,6 +1,6 @@
 ---@diagnostic disable: undefined-global, undefined-field, deprecated, need-check-nil, duplicate-index
 --
--- Copyright (c) 2024 dragos112
+-- Copyright (c) 2025 dragos112
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,11 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 -- SOFTWARE.
 local menu = {
-    version = "1.0.1",
+    version = "1.0.0",
     author = "dragos112 & mirai",
-    description = "Import and export ESP settings",
-    url = "https://github.com/hiraeeth/Visuals-Editor/blob/main/esp_visuals_editor.lua",
-    dependencies = {"gamesense/clipboard", "gamesense/base64"},
+    description = "Import and export ESP settings (with predefined modules)",
+    url = "https://github.com/hiraeeth/Visuals-Editor",
+    dependencies = {"gamesense/clipboard", "gamesense/base64", "gamesense/http"},
     configs = database.read("gamesense::esp_settings::configs") or {},
     options = database.read("gamesense::esp_settings::options") or {},
     editor_enabled = database.read("gamesense::esp_settings::editor_enabled") or false,
@@ -49,6 +49,7 @@ end
 
 local clipboard = try_require("gamesense/clipboard", "You don't have 'gamesense/clipboard'. Subscribe to it: https://gamesense.pub/forums/viewtopic.php?id=28678")
 local base64 = try_require("gamesense/base64", "You don't have 'gamesense/base64'. Subscribe to it: https://gamesense.pub/forums/viewtopic.php?id=21619")
+local ffi = try_require("ffi", "You must enable 'Allow unsafe scripts'")
 
 --- Prints the given arguments as strings, concatenated with spaces.
 --- @param ... any The arguments to print.
@@ -72,6 +73,56 @@ table.find = function(tbl, string)
         end
     end
     return false
+end
+
+--- @class file_system
+--- @field class ffi.cdata* FFI cast of VFileSystem017 interface
+--- @field vftbl ffi.cdata* Virtual function table for the filesystem interface
+--- @field func_create_dir function FFI cast of directory creation function
+--- @field func_is_dir function FFI cast of directory check function
+--- @field native_GetGameDirectory function FFI binding to get game directory
+local file_system = {}
+
+--- Cast the filesystem interface to a void*** type
+file_system.class = ffi.cast(ffi.typeof("void***"), client.create_interface("filesystem_stdio.dll", "VFileSystem017"))
+file_system.vftbl = file_system.class[0]
+
+--- Cast the directory manipulation functions
+file_system.func_create_dir = ffi.cast("void (__thiscall*)(void*, const char*, const char*)", file_system.vftbl[22])
+file_system.func_is_dir = ffi.cast("bool(__thiscall*)(void*, const char*, const char*)", file_system.vftbl[23])
+
+--- Bind the game directory getter function
+file_system.native_GetGameDirectory = vtable_bind("engine.dll", "VEngineClient014", 36, "const char*(__thiscall*)(void*)")
+
+--- Gets the CS:GO game directory path
+--- @return string Game directory path
+file_system.get_game_directory = function()
+    return ffi.string(file_system.native_GetGameDirectory())
+end
+
+--- Checks if a path is a directory
+--- @param path string Path to check
+--- @param path_id string|nil Path ID to check against
+--- @return boolean True if path is a directory
+file_system.is_directory = function(path, path_id)
+    return file_system.func_is_dir(file_system.class, path, path_id)
+end
+
+--- Creates a directory at the specified path
+--- @param path string Path where to create directory
+--- @param path_id string|nil Path ID for the new directory
+file_system.create_directory = function(path, path_id)
+    file_system.func_create_dir(file_system.class, path, path_id)
+end
+
+local function create_directory()
+    local base = file_system.get_game_directory()
+    local dir = base:match("^(.*)\\csgo$") or base
+
+    local target = dir .. "\\visuals_editor"
+    if not file_system.is_directory(target, nil) then
+        file_system.create_directory(target, nil)
+    end
 end
 
 -- Menu references for the ESP data.
@@ -109,7 +160,17 @@ menu.refs = {
         on_shot = {ui.reference("VISUALS", "Colored models", "On shot")},
         ragdolls = ui.reference("VISUALS", "Colored models", "Ragdolls"),
         hands = {ui.reference("VISUALS", "Colored models", "Hands")},
-        weapon_viewmodel = {ui.reference("VISUALS", "Colored models", "Weapon viewmodel")}, 
+        weapon_viewmodel = {ui.reference("VISUALS", "Colored models", "Weapon viewmodel")},
+        weapons = {ui.reference("VISUALS", "Colored models", "Weapons")},
+        disable_model_occlusion = ui.reference("VISUALS", "Colored models", "Disable model occlusion"),
+        shadow = {ui.reference("VISUALS", "Colored models", "Shadow")},
+        props = {ui.reference("VISUALS", "Colored models", "Props")}
+    },
+    other_esp = {
+        radar = ui.reference("VISUALS", "Other ESP", "Radar"),
+        dropped_weapons = {ui.reference("VISUALS", "Other ESP", "Dropped weapons")},
+        grenades = {ui.reference("VISUALS", "Other ESP", "Grenades")},
+        inaccuracy_overlay = {ui.reference("VISUALS", "Other ESP", "Inaccuracy overlay")},
         recoil_overlay = ui.reference("VISUALS", "Other ESP", "Recoil overlay"),
         grenade_trajectory = {ui.reference("VISUALS", "Other ESP", "Grenade trajectory")},
         grenade_trajectory_hit = {ui.reference("VISUALS", "Other ESP", "Grenade trajectory (hit)")},
@@ -444,7 +505,7 @@ ui.set_callback(menu.elements.download_module, function()
     end)
 
     if not _success then
-        return error("To download modules you need to have 'gamesense/http' library. Subscribe to it: https://gamesense.pub/forums/viewtopic.php?id=19253")
+        return error("To download modules you need to have 'gamesense/http' library. Subscribe to it: ...")
     end
 
     local module = available_modules[ui.get(menu.elements.modules) + 1]
@@ -457,6 +518,7 @@ ui.set_callback(menu.elements.download_module, function()
         ui.set_enabled(menu.elements.modules, false)
 
         local success, err = pcall(function()
+            create_directory()
             local body = response.body
             writefile(("visuals_editor/%s.lua"):format(module.name), body)
 
@@ -468,6 +530,7 @@ ui.set_callback(menu.elements.download_module, function()
             print(("Downloaded module %s to visuals_editor/%s.lua"):format(module.name, module.name))
         end)
 
+        ui.set_enabled(menu.elements.download_module, true)
         ui.set_enabled(menu.elements.modules, true)
 
         if not success then
