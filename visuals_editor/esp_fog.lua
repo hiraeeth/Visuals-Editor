@@ -69,7 +69,7 @@ local function dump_27(arg_5_0)
 
     for iter_5_0, iter_5_1 in ipairs(dump_7) do
         for iter_5_2, iter_5_3 in ipairs(materialsystem.find_materials(iter_5_1) or {}) do
-            iter_5_3:set_material_dump_flag(dump_5, not dump_5_0)
+            iter_5_3:set_material_var_flag(dump_5, not dump_5_0)
 
             local dump_5_1 = iter_5_3:get_shader_param("$fogfadeend")
 
@@ -91,7 +91,7 @@ local function dump_27(arg_5_0)
 
     for iter_5_4, iter_5_5 in ipairs(dump_8) do
         for iter_5_6, iter_5_7 in ipairs(materialsystem.find_materials(iter_5_5) or {}) do
-            iter_5_7:set_material_dump_flag(dump_5, not dump_5_2)
+            iter_5_7:set_material_var_flag(dump_5, not dump_5_2)
         end
     end
 
